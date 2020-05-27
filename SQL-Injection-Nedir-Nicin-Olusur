@@ -1,0 +1,54 @@
+SQL Nedir?
+SQL (Structured Query Language) 
+veritabanlarında data çekme, silme ve değiştirme benzer biçimde işlemler için kullanılan kolay yapılı bir dildir. 
+Bugün hemen hemen bütün web uygulamalarının altyapısında veritabanı desteği vardır ve bu internet uygulamaları 
+veritabanı ile SQL vesilesiyle anlaşırlar.
+
+Bir siteye mesaj bıraktığınızda bu mesaj veritabanına kaydedilir. 
+O ileti onaylandığında veritabanındaki bir alan güncellenmiş olur. 
+Yönetici veritabanındaki kaydı silerek o mesajın siteden silinmesini sağlar.
+
+Örnek bir kayıt silme SQL cümlesi şu şekilde olabilir;
+DELETE FROM uyeler WHERE id=17
+
+Yukarıdaki kod veritabanı tarafından çalıştırıldığında uyeler tablosunda id alanı 17 olan kayıt silinecektir.
+
+Bu yazı SQL dilinin rahat detaylarını ele almayacaktır. 
+Eğer SQL konusunda zayıf iseniz makaleyi anlamanız güç olacaktır. 
+Makaleye devam etmeden ilkin SQL in temel komutlarını öğrenmenizi ve veritabanı mantığınız anlamanızı tavsiye ederim.
+
+SQL Injection Nedir?
+Web uygulamalarında bir çok muamele için kullanıcıdan alınan veri ile dinamik SQL cümlecikleri oluşturulur. 
+Mesela “SELECT * FROM Uyeler” misal SQL cümleciği basit halde veritabanından internet uygulamasına bütün Üyeleri döndürecektir. 
+Bu SQL cümlecikleri oluşturulurken araya sıkıştırılan herhangi bir meta-karakter SQL Injection’ a neden olabilir.
+
+Meta-Karakter Nedir?
+Meta-karakter bir program için hususi anlamı olan karakterlere verilen isimdir. 
+Örnek olarak C temelli C#, Javascript, PHP şeklinde dillerde () backslash karakteri bir meta-karakterdir. 
+Compiler (derleyici) veya Interpreter (yorumlayıcı) bu karakteri görür görmez ondan sonraki karakteri ona göre işler.
+
+SQL’ için tehlikeli sonuç metakarakter (‘) tek tırnak’ tır. 
+Çünkü iki tek tırnağın arası string olarak algılanır. 
+Diğer bir mühim meta-karakter ise (;) noktalı virgüldür, satırın bittiğini ve yeni satır başladığını bildirir.
+
+
+SQL Injection açığı niçin oluşur ?
+SQL Injection’ dan korunma da iki mühim kural vardır.
+
+Tüm meta-karakterlerden kaçılmalıdır,
+Nümerik olarak beklenen parameterlerin nümerik olup olmadığı test edilmelidir.
+Birinci Kural;
+Dinamik oluşturulan tüm SQL cümlecikleri meta karakterlerden başarıya ulaşmış bir şekilde kaçmalıdır. 
+Örnek olarak SQL Server için (') tek tırnak karakterini uygulama (') iki tek tırnak ile değiştirilmelidir. 
+Bu sayede SQL Server bunun tek tırnak karakteri bulunduğunu anlayabilir.
+
+İkinci Kural;
+Eğer oluşturulacak SQL cümlesi için beklenen data nümerik ise nümerik mi diye test edilmeli eğer ve nümerik değilse uygulama bu datayı kabul etmemelidir.
+Saldırının anatomisi anlaşıldıktan sonrasında defansı oldukça basit olacaktır.
+
+SQL cümleciği oluşturulmadan ilkin SQL cümleciğini meydana getirmeye destek olan tüm dinamik dataların beklenen data tiplerine uyup uymamasının test edilmesi. 
+Nümerik beklenen bilgi gerçekten nümerik mi? Gibi. String kayıtlarda mutlaka meta karakterlerden kaçma 
+Parameterized SQL cümlecikleri oluşturma Stored Procedure Kullanma (Stored Procedure lerde güvenli biçimde yazılmalıdır) 
+Whitelisting, Sadece beklenen karakterlerin kabul edilmesi. Mesela isim girilecek bir yerde noktalama işaretlerinin kabul edilmemesi gibi.
+Whitelisting yapıldıktan ondan sonra gene meta-karakterlerden kaçılmalıdır. Detaylı korunma metotları bu yazı dizisinin mevzusu dışındadır.
+
