@@ -24,7 +24,7 @@ Bu SQL cümlecikleri oluşturulurken araya sıkıştırılan herhangi bir meta-k
 
 Meta-Karakter Nedir?
 Meta-karakter bir program için hususi anlamı olan karakterlere verilen isimdir. 
-Örnek olarak C temelli C#, Javascript, PHP şeklinde dillerde () backslash karakteri bir meta-karakterdir. 
+Örnek olarak C temelli C#, Javascript, PHP şeklinde dillerde (\) backslash karakteri bir meta-karakterdir. 
 Compiler (derleyici) veya Interpreter (yorumlayıcı) bu karakteri görür görmez ondan sonraki karakteri ona göre işler.
 
 SQL’ için tehlikeli sonuç metakarakter (‘) tek tırnak’ tır. 
