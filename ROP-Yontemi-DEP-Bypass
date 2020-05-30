@@ -1,31 +1,31 @@
 Buffer Overflow (Arabellek Taşması) Nedir?
-Buffer, hafızada ard arda dizili türde veri tipi depolayan hafıza bloğudur.
+Buffer, hafızada art arda dizili türde veri tipi depolayan hafıza bloğudur.
 
-Buffer Overflow ise, hatalı bir şekilde kullanılan fonksiyonlardan oluşan(strcpy,strcmp vs.) bir programda yer alan değişkenlere, 
+Buffer Overflow ise, hatalı bir şekilde kullanılan fonksiyonlardan oluşan (strcpy,strcmp vs.) bir programda yer alan değişkenlere, 
 saklama kapasitelerinden daha fazla veri yüklenmesi ile programın crash olması durumuna denir.
 Kapasite aşıldığından dolayı programın akışı, normal akışta olmayan kodlarla yani shellcode kodlar ile değiştirilebilir.
 
-Güzel Diyorsun da “Stack” Nedir??
-RAM’in düşük adresten başlayıp yüksek adrese giden bir yapısı vardır.
+Güzel Diyorsun da “Stack” Nedir?
+RAM ’in düşük adresten başlayıp yüksek adrese giden bir yapısı vardır.
 İşletim sisteminde yeni bir thread oluşturulduğunda bellekte; fonksiyon parametrelerini, lokal değişkenleri ve fonksiyonların çalışması 
 sonlandıktan sonra devam edeceği yeri saklamak için, yığın(stack) denilen alanlar oluşturulur. 
-Her thread için iki stack oluşturulur.Stack kısaca anlatmak gerekirse programlardaki değişkenlerin geçici olarak hafızada bulunduğu bölgedir.
+Her thread için iki stack oluşturulur. Stack kısaca anlatmak gerekirse programlardaki değişkenlerin geçici olarak hafızada bulunduğu bölgedir.
 Bu bölgede dinamik değişkenler, fonksiyon çağrıları(jmp, call vs.), return değerleri gibi kısımlar saklanır. 
 Stack, LIFO(Last-In-First-Out) mantığıyla yani son giren ilk çıkar mantığıyla çalışır. 
-Stack yeni oluşturulduğunda EBP ve ESP register’ları aynı yeri gösterir. Stack’e eleman PUSH edildikçe EBP register’i sabit kalırken, 
+Stack yeni oluşturulduğunda EBP ve ESP register’ları aynı yeri gösterir. Stack’e eleman PUSH edildikçe EBP register’ı sabit kalırken, 
 ESP register’ının değeri gittikçe azalır.
 
 
 Stackin kullanım amaçları
 
-- Fonksiyon local değişkenleri için hafıza alanı sağlaması.
+- Fonksiyon lokal değişkenleri için hafıza alanı sağlaması.
 
 Her ne kadar biz makina kodu seviyesinde debug ediyor olsak da 
-aslında işlemci ve işletim sistemi bize yine bi abstraction katmanı ile iletişim sağlıyor.
-bunu şöyle açıklamaya çalışayım eğer derleyen kişi özel olarak bi değişiklik yapmadıysa (x86 mimariler için)
+aslında işlemci ve işletim sistemi bize yine bir abstraction katmanı ile iletişim sağlıyor.
+bunu şöyle açıklamaya çalışayım eğer derleyen kişi özel olarak bir değişiklik yapmadıysa (x86 mimariler için)
 genellikle bütün uygulamalar hex 400bin adresinde başlar. 
 tüm uygulamaların fiziksel olarak aynı adrese yerleşmesi mümkün olamayacağına göre
-gördüğümüz adresler sanal adresdir diyebiliriz. aslında bunlar fiziksel olarak rem üstünde işletim sisteminin ve işlemcinin kontrol ettiği
+gördüğümüz adresler sanal adrestir diyebiliriz. aslında bunlar fiziksel olarak rem üstünde işletim sisteminin ve işlemcinin kontrol ettiği
 farklı page lere yerleştiriliyor.
 
 - Bir fonksiyon çağırıldığında çağrılan fonksiyondan çıkıldığında dönülecek instruction
@@ -34,7 +34,7 @@ adresinin saklanması.
 Her bir fonksiyon çağırıldığında call instruction dolaylı olarak stack e 
 call instruction dan sonraki instruction adresini yazıyor.
 çağrılan fonksiyon return ettiğinde return instruction ı ile birlikte EIP registerına atanıyor. 
-EIP nin stackde saklandığı yeri manipüle edebiliyorsak burda programın akışını
+EIP’nin stackde saklandığı yeri manipüle edebiliyorsak burada programın akışını
 istediğimiz bir bölgeye yönlendirebiliyoruz. yani shell kodumuzu inject edebiliyoruz.
 
 - Çağıran fonksiyonun stack taban adresinin saklanması.
@@ -44,12 +44,12 @@ istediğimiz bir bölgeye yönlendirebiliyoruz. yani shell kodumuzu inject edebi
 buraya kadar klasik stack tabanlı buffer overflow.
 
 Klasik buffer overflow saldırılarında programların heap veya stack içerisinde kod çalıştırılmasının önüne geçmek için,
-ortaya NX (Non-Executable) isimli birşey çıkmış. tabi buna farklı isimler verenler de var
+ortaya NX (Non-Executable) isimli bir şey çıkmış. tabi buna farklı isimler verenler de var
 Intel buna execute disable (XD) , ARM ise execute never (XN) 
 ve Microsoft da data execution prevention (DEP) şeklinde adlandırmalar yapmıştır.
 
 Bu NX'den Kısaca bahsetmek gerekirse programımızdaki heap veya stack gibi kısımların çalıştırılamaz olarak işaretlenmesine yarıyor.
-Yani Klasik Stack Tabanlı Buffer Overflow Zaafiyetlerinde Yaptığımız Gibi Direk Stack Üzerinde Shell Code Çalıştırmamızı Engelliyor. 
+Yani Klasik Stack Tabanlı Buffer Overflow Zafiyetlerinde Yaptığımız Gibi Direk Stack Üzerinde Shell Code Çalıştırmamızı Engelliyor. 
 bu koruma yöntemini atlatmak için 2 teknik çıkmış. ret2libc (Return-to-libc) ve ROP (Return-oriented programming)
 bugün size anlatacağım ROP Tekniği Olacak.
 
@@ -62,18 +62,13 @@ temelde kütüphanelerin adresini (libc) rastgele hale getirir, böylece libc fo
 ASLR tekniği Ret2libc önler ve bizi adres hesaplamak için sürekli adresleri sızdırmaya zorlar. 
 bir sebebi ise bazı durumlarda yazılımcılar libc kullanımını kısıtladıklarında 
 kullanabileceğimiz en iyi tekniklerden birisi ROP tekniğidir diyebiliriz. 
-(Aslında brute-force yöntemi ile de bi şekilde aslr aşılabiliyor fakat bu çokta iyi bi çözüm değil bence)
+(Aslında brute-force yöntemi ile de bir şekilde aslr aşılabiliyor fakat bu çokta iyi bir çözüm değil bence)
 
 ROP Nedir ?
 
 Adından da anlaşıldığı üzere dönüş odaklı programlama anlamına gelmektedir ve 
-NX gibi korumaları atlamak için kullanılan modern bir teknikdir.
+NX gibi korumaları atlamak için kullanılan modern bir tekniktir.
 ROP tekniğinde asıl olay gadget yani talimatlarda. Bu ufak gadget‘ları birbirine zincirleyerek hedefe ulaşılmaya çalışılır.
 
 İşin mantığı aslında. EIP registerının üzerine programın içerisinde return 
-komutu çalıştıran bir adresi verip daha sonra da bu komuta döneceği adresin bizim SHELL adresimiz olması gerektiğini söyleyemek.
-
-
-
-Kaynakça:
-https://mavidurak.github.io/Stack-Overflow-Zafiyetleri/
+komutu çalıştıran bir adresi verip daha sonra da bu komuta döneceği adresin bizim SHELL adresimiz olması gerektiğini söylemek.
